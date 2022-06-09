@@ -89,16 +89,16 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     let fkon = { key: { fromMe: false, participant: `${m.sender.split`@`[0]}@s.whatsapp.net`, ...(m.chat ? { remoteJid: '16504228206@s.whatsapp.net' } : {}) }, message: { contactMessage: { displayName: `${name}`, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`}}}
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
     // const pp = await conn.profilePictureUrl(conn.user.jid, 'image').catch(_ => './src/avatar_contact.png')
-    // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
+    // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['Speedtest✧⊰⊹ฺ💻', _p + 'ping'], ['BY★ZakY😈', _p + 'owner']], m)
     //conn.sendHydrated(m.chat, text.trim(), conn.getName(conn.user.jid), await genProfile(conn, m), 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ', 'YouTube', null, null, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
-   // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: 'Speedtest💻', id: `${_p}ping` }}, { quickReplyButton: { displayText: 'Zaky Ganz(^_-)', id: `${_p}owner` }} ] })
-   conn.sendButton(m.chat, `*${wish()}, ${name} 👋*`, text.trim(), await genProfile(conn, m), [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], false, { quoted: fkon, contextInfo: { externalAdReply: { showAdAttribution: true,
+   // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: 'Speedtest✧⊰⊹ฺ💻', id: `${_p}ping` }}, { quickReplyButton: { displayText: 'BY★ZakY😈', id: `${_p}owner` }} ] })
+   conn.sendButton(m.chat, `*${wish()}, ${name} 👋*`, text.trim(), await genProfile(conn, m), [['Speedtest✧⊰⊹ฺ💻', _p + 'ping'], ['BY★ZakY😈', _p + 'owner']], false, { quoted: fkon, contextInfo: { externalAdReply: { showAdAttribution: true,
 mediaType: 'VIDEO',
 mediaUrl: 'https://www.kibrispdr.org/dwn/7/yotsuba-nakano-wallpaper.jpg',
 title: 'By ZakY',
 body: 'By zakybot-md',
 thumbnail: fs.readFileSync("./thumbnail.jpg"),
-sourceUrl: 'https://chat.whatsapp.com/FZEid847RlmJWNBMnSyXPI'
+sourceUrl: 'https://github.com/zakybot-md/zakybot'
 }
   }
 })
@@ -109,8 +109,8 @@ ptt: true
     // conn.sendButton(m.chat, 
     //`*Hi, ${name} 👋*\n\n`, 
   //  text.trim(), './media/marin.jpg', [
-// [`Speedtest`, `${_p}ping`],
-// [`Owner`, `${_p}owner`]
+// [`Speedtest✧⊰⊹ฺ💻`, `${_p}ping`],
+// [`BY★ZakY😈`, `${_p}owner`]
 //], m, {asLocation: true})
   } catch (e) {
     m.reply('An error occurred')
@@ -140,19 +140,19 @@ function wish() {
   const time = moment.tz('Asia/Kolkata').format('HH')
   wishloc = ('Hi')
   if (time >= 0) {
-    wishloc = ('Night Rider')
+    wishloc = ('Night Sayang Jangan Begadang Ntar Sakit Loh😇')
   }
   if (time >= 4) {
-    wishloc = ('Good Morning')
+    wishloc = ('Selamat Pagi Beban😂')
   }
   if (time >= 12) {
-    wishloc = ('Good Afternoon')
+    wishloc = ('Selamat Siang Kak apa Yang bisa Zakybot Bantu😉')
   }
   if (time >= 16) {
-    wishloc = ('️Good Evening')
+    wishloc = ('️Selamat Malam Tod😬')
   }
   if (time >= 23) {
-    wishloc = ('Night Rider')
+    wishloc = ('Night Sayang Jangan Begadang Ntar Sakit Loh😇')
   }
   return wishloc
 }
