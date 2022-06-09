@@ -1,46 +1,145 @@
-//Make & Help By
-//Johannes & Papah-Chan
-import jimp from 'jimp'
-import fs from 'fs'
-import PhoneNumber from 'awesome-phonenumber'
-import moment from 'moment-timezone'
+// CREATED BY JOHANNES (MY GURU)
+// gh nya? https://github.com/johannes2803
+// CREDITS NYA JGN DI HAPUS YA BANH
+// PENAMBAHAN AUDIO BY RI
+// follow ya banh https://github.com/FahriAdison
+const { default: makeWASocket, BufferJSON, WA_DEFAULT_EPHEMERAL, generateWAMessageFromContent, downloadContentFromMessage, downloadHistory, proto, getMessage, generateWAMessageContent, prepareWAMessageMedia } = require('@adiwajshing/baileys')
+wm = global.wm
+let fs = require('fs')
+let path = require('path')
+let levelling = require('../lib/levelling')
+let handler = async (m, { conn, usedPrefix: _p, args, command }) => {
+//*****************FOTO USER*********************
+let pp = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+ try {
+ 	pp = await conn.profilePictureUrl(m.sender, 'image')
+} catch (e) {
 
-let tags = {}
+  } finally {
+}
+//*****************BAGIAN MENU*********************
+let tags = {
+  'main': 'MENU UTAMA',
+  'game': 'MENU GAME',
+  'rpg': 'MENU RPG',
+  'xp': 'MENU EXP',
+  'premium': 'MENU PREMIUM',
+  'group': 'MENU GROUP',
+  'absen': 'MENU ABSEN',
+  'vote': 'MENU VOTE',
+  'owner': 'MENU OWNER',
+  'islam': 'MENU ISLAMI',
+  'quran': 'MENU ALQURAN',
+  'fun': 'MENU FUN',
+  'sticker': 'MENU CONVERT',
+  'maker': 'MENU MAKER',
+  'github': 'MENU GITHUB',
+  'internet': 'INTERNET',
+  'kerang': 'MENU KERANG',
+  'anime': 'MENU ANIME',
+  'animsearch': 'ANIME SEARCH',
+  'downloader': 'DOWNLOADER',
+  'hentai': 'MENU MININGDOSA',
+  'tools': 'MENU TOOLS',
+  'advanced': 'ADVANCED',
+  'quotes': 'MENU QUOTES',
+  'info': 'MENU INFO',
+  'nulis': 'MENU NULIS',
+  'suara': 'MENU VN',
+  'stalk': 'MENU STALK',
+  
+}
 const defaultMenu = {
-  before: `\n> Date: %date\n> Time: %time \n> Runtime: %uptime\n%readmore`,
-  header: '*❏═┅═━–〈 %category*',
-  body: '┊› %cmd %islimit %isPremium',
-  footer: '',
-  after: '',
+  before: `
+  ───────━┅ *D A S H B O A R D* ┅━───────
+  
+    「 *U S E R* 」
+☂︎ *Name:* %name
+☂︎ *Status:* user ${wm}
+☂︎ *Limit:* %limit
+☂︎ *Role:* %role
+☂︎ *Level:* %level 
+☂︎ *Xp:* %exp / %maxexp
+☂︎ *Total Xp:* %totalexp
+☂︎ *Premium:* ${global.prem ? '✅' : '❌'}
+
+  「 *T O D A Y* 」
+☂︎ *Days:* %week %weton
+☂︎ *Date:* %date
+☂︎ *Islamic Date:* %dateIslamic
+☂︎ *Time:* %time
+
+  「 *I N F O* 」
+☂︎ *Bot Name:* ${wm}
+☂︎ *Lib*: Baileys-MD
+☂︎ *${Object.keys(global.db.data.users).length}* *Pengguna*
+☂︎ *Prefix:* [. / #]
+☂︎ *Uptime:* %uptime
+☂︎ *Mode:* ${global.opts['self'] ? 'Self' : 'publik'}
+☂︎ *Database:* %rtotalreg dari %totalreg
+☂︎ *${Object.entries(global.db.data.chats).filter(chat => chat[1].isBanned).length}* *Chat Terbanned*
+☂︎ *${Object.entries(global.db.data.users).filter(user => user[1].banned).length}* Pengguna Terbanned
+
+⃝▣「 *I N F O  C M D* 」
+│ *Ⓟ* = Premium
+│ *Ⓛ* = Limit
+▣──···
+  %readmore`.trimStart(), 
+   header: '⃝▣             「 *%category* 」',
+   body: '│☂︎ %cmd %isPremium %islimit',
+   footer: '▣──···\n',
+    after: `
+*%npmname@^%version*
+${'```%npmdesc```'}
+`,
 }
 
-let handler = async (m, { conn, usedPrefix: _p }) => {
   try {
-    let name = m.pushName || conn.getName(m.sender)
+    let package = JSON.parse(await fs.promises.readFile(path.join(__dirname, '../package.json')).catch(_ => '{}'))
+    let who
+    if (m.isGroup) who = m.mentionedJid[0] ? m.mentionedJid[0] : m.sender
+    else who = m.sender 
+    let bzz = fs.readFileSync('./audio/pale.mp3')
+    let user = global.db.data.users[who]
+    let { exp, limit, level, money, role } = global.db.data.users[m.sender]
+    let { min, xp, max } = levelling.xpRange(level, global.multiplier)
+    let name = conn.getName(m.sender)
     let d = new Date(new Date + 3600000)
-    let locale = 'en'
+    let locale = 'id'
     // d.getTimeZoneOffset()
     // Offset -420 is 18.00
     // Offset    0 is  0.00
     // Offset  420 is  7.00
+    let weton = ['Pahing', 'Pon', 'Wage', 'Kliwon', 'Legi'][Math.floor(d / 84600000) % 5]
+    let week = d.toLocaleDateString(locale, { weekday: 'long' })
     let date = d.toLocaleDateString(locale, {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
-      timeZone: 'Asia/Jakarta'
+      year: 'numeric'
     })
-    let time = d.toLocaleTimeString(locale, { timeZone: 'Asia/Jakarta' })
-    time = time.replace(/[.]/g, ':')
-    let _uptime
+    let dateIslamic = Intl.DateTimeFormat(locale + '-TN-u-ca-islamic', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(d)
+    let time = d.toLocaleTimeString(locale, {
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    })
+    let _uptime = process.uptime() * 1000
+    let _muptime
     if (process.send) {
       process.send('uptime')
-      _uptime = await new Promise(resolve => {
+      _muptime = await new Promise(resolve => {
         process.once('message', resolve)
         setTimeout(resolve, 1000)
       }) * 1000
     }
-      let vn = './media/zaky.mp3'
+    let muptime = clockString(_muptime)
     let uptime = clockString(_uptime)
+    let totalreg = Object.keys(global.db.data.users).length
+    let rtotalreg = Object.values(global.db.data.users).filter(user => user.registered == true).length
     let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
       return {
         help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
@@ -60,11 +159,11 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     let header = conn.menu.header || defaultMenu.header
     let body = conn.menu.body || defaultMenu.body
     let footer = conn.menu.footer || defaultMenu.footer
-    let after = conn.menu.after || defaultMenu.after
+    let after = conn.menu.after || (conn.user.jid == global.conn.user.jid ? '' : `Powered by https://wa.me/${global.conn.user.jid.split`@`[0]}`) + defaultMenu.after
     let _text = [
       before,
       ...Object.keys(tags).map(tag => {
-        return header.replace(/%category/g, tags[tag].toUpperCase()) + '\n' + [
+        return header.replace(/%category/g, tags[tag]) + '\n' + [
           ...help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help).map(menu => {
             return menu.help.map(help => {
               return body.replace(/%cmd/g, menu.prefix ? help : '%p' + help)
@@ -78,49 +177,98 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       }),
       after
     ].join('\n')
-    let text = typeof conn.menu == 'string' ? conn.menu : typeof conn.menu == 'object' ? _text : ''
+    text = typeof conn.menu == 'string' ? conn.menu : typeof conn.menu == 'object' ? _text : ''
     let replace = {
       '%': '%',
-      p: _p, uptime,
-      me: conn.getName(conn.user.jid),
-      name, date, time,
+      p: _p, uptime, muptime,
+      me: conn.user.name,
+      npmname: package.name,
+      npmdesc: package.description,
+      version: package.version,
+      exp: exp - min,
+      maxexp: xp,
+      totalexp: exp,
+      xp4levelup: max - exp,
+      github: package.homepage ? package.homepage.url || package.homepage : '[unknown github url]',
+      level, limit, money, name, weton, week, date, dateIslamic, time, totalreg, rtotalreg, role,
       readmore: readMore
     }
-    let fkon = { key: { fromMe: false, participant: `${m.sender.split`@`[0]}@s.whatsapp.net`, ...(m.chat ? { remoteJid: '16504228206@s.whatsapp.net' } : {}) }, message: { contactMessage: { displayName: `${name}`, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`}}}
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
-    // const pp = await conn.profilePictureUrl(conn.user.jid, 'image').catch(_ => './src/avatar_contact.png')
-    // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['Speedtest✧⊰⊹ฺ💻', _p + 'ping'], ['BY★ZakY😈', _p + 'owner']], m)
-    //conn.sendHydrated(m.chat, text.trim(), conn.getName(conn.user.jid), await genProfile(conn, m), 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ', 'YouTube', null, null, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
-   // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: 'Speedtest✧⊰⊹ฺ💻', id: `${_p}ping` }}, { quickReplyButton: { displayText: 'BY★ZakY😈', id: `${_p}owner` }} ] })
-   conn.sendButton(m.chat, `*${wish()}, ${name} 👋*`, text.trim(), await genProfile(conn, m), [['Speedtest✧⊰⊹ฺ💻', _p + 'ping'], ['BY★ZakY😈', _p + 'owner']], false, { quoted: fkon, contextInfo: { externalAdReply: { showAdAttribution: true,
-mediaType: 'VIDEO',
-mediaUrl: 'https://www.kibrispdr.org/dwn/7/yotsuba-nakano-wallpaper.jpg',
-title: 'By ZakY',
-body: 'By zakybot-md',
-thumbnail: fs.readFileSync("./thumbnail.jpg"),
-sourceUrl: 'https://github.com/zakybot-md/zakybot'
-}
-  }
-})
-conn.sendFile(m.chat, vn, 'dj1.mp3', null, m, true, {
-type: 'audioMessage', 
-ptt: true 
-})
-    // conn.sendButton(m.chat, 
-    //`*Hi, ${name} 👋*\n\n`, 
-  //  text.trim(), './media/marin.jpg', [
-// [`Speedtest✧⊰⊹ฺ💻`, `${_p}ping`],
-// [`BY★ZakY😈`, `${_p}owner`]
-//], m, {asLocation: true})
+    await conn.sendFile(m.chat, bzz, 'bzz.opus', null, m, true)
+    let template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
+			         templateMessage: {
+             hydratedTemplate: {
+                 hydratedContentText: text.trim(),
+                 hydratedFooterText: 'Made By ZakY\nMy Guru',
+                 "headerType": "DOCUMENT", 
+                 "documentMessage": {
+            "url": "https://mmg.whatsapp.net/d/f/Ah9LXq1Z_XnRLzlVnZSt6_yWxC6mp20xTpZRSJxc7TUP.enc",
+            "mimetype": "application/pdf",
+            "title": "johannes.pdf",
+            "fileSha256": "8Xfe3NQDhjwVjR54tkkShLDGrIFKR9QT5EsthPyxDCI=",
+            "fileLength": "99999999999999",
+            "pageCount": 99999999999999,
+            "mediaKey": "XWv4hcnpGY51qEVSO9+e+q6LYqPR3DbtT4iqS9yKhkI=",
+            "fileName": "Marin-MD Bot WhatsApp",
+            "fileEncSha256": "NI9ykWUcXKquea4BmH7GgzhMb3pAeqqwE+MTFbH/Wk8=",
+            "directPath": "/v/t62.7118-24/35150115_287008086621545_8250021012380583765_n.enc?ccb=11-4&oh=6f0f730e5224c054969c276a6276a920&oe=61A21F46",
+            "mediaKeyTimestamp": "1634472176",
+            "jpegThumbnail": await (await require('node-fetch')(pp)).buffer(),},
+                 hydratedButtons: [{
+                     urlButton: {
+                         displayText: 'MY WEB',
+               url: 'https://youtube.com/channel/UC3zScvuQfMxqiTC5x_JUEng'
+             }
+
+           },
+             {
+             urlButton: {
+               displayText: 'MY GROUP',
+               url: 'https://chat.whatsapp.com/GngfXIF8XmgHf9Gm7MQFps'
+             }
+
+           },
+           {
+            quickReplyButton: {
+              displayText: 'Owner',
+              id: '.owner',
+            }
+
+          },
+              {
+            quickReplyButton: {
+              displayText: 'SC',
+              id: '.sc',
+                     }
+                 }
+                 ]
+             }
+         }
+     }), { userJid: m.sender, quoted: m});
+     //conn.reply(m.chat, text.trim(), m)
+     return await conn.relayMessage(
+         m.chat,
+         template.message,
+         { messageId: template.key.id }
+     )
   } catch (e) {
-    m.reply('An error occurred')
+    conn.reply(m.chat, 'Maaf, menu sedang error', m)
     throw e
   }
 }
 handler.help = ['m']
 handler.tags = ['general']
-handler.alias = ['m']
 handler.command = /^(m)$/i
+handler.owner = false
+handler.mods = false
+handler.premium = false
+handler.group = false
+handler.private = false
+
+handler.admin = false
+handler.botAdmin = false
+
+handler.fail = null
 handler.exp = 3
 
 export default handler
@@ -133,55 +281,4 @@ function clockString(ms) {
   let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
   let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-}
-
-function wish() {
-    let wishloc = ''
-  const time = moment.tz('Asia/Kolkata').format('HH')
-  wishloc = ('Hi')
-  if (time >= 0) {
-    wishloc = ('Night Sayang Jangan Begadang Ntar Sakit Loh😇')
-  }
-  if (time >= 4) {
-    wishloc = ('Selamat Pagi Beban😂')
-  }
-  if (time >= 12) {
-    wishloc = ('Selamat Siang Kak apa Yang bisa Zakybot Bantu😉')
-  }
-  if (time >= 16) {
-    wishloc = ('️Selamat Malam Tod😬')
-  }
-  if (time >= 23) {
-    wishloc = ('Night Sayang Jangan Begadang Ntar Sakit Loh😇')
-  }
-  return wishloc
-}
-
-async function genProfile(conn, m) {
-  let font = await jimp.loadFont('./names.fnt'),
-    mask = await jimp.read('https://i.imgur.com/552kzaW.png'),
-    welcome = await jimp.read(thumbnailUrl.getRandom()),
-
-let pp = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
- try {
- 	pp = await conn.profilePictureUrl(m.sender, 'image')
-} catch (e) {
-
-  } finally {
-}
-
-    status = (await conn.fetchStatus(m.sender).catch(console.log) || {}).status?.slice(0, 30) || 'Not Detected'
-
-    await avatar.resize(460, 460)
-    await mask.resize(460, 460)
-    await avatar.mask(mask)
-    await welcome.resize(welcome.getWidth(), welcome.getHeight())
-
-    await welcome.print(font, 550, 180, 'Name:')
-    await welcome.print(font, 650, 255, m.pushName.slice(0, 25))
-    await welcome.print(font, 550, 340, 'About:')
-    await welcome.print(font, 650, 415, status)
-    await welcome.print(font, 550, 500, 'Number:')
-    await welcome.print(font, 650, 575, PhoneNumber('+' + m.sender.split('@')[0]).getNumber('international'))
-    return await welcome.composite(avatar, 50, 170).getBufferAsync('image/png')
 }
