@@ -47,8 +47,10 @@ https://github.com/Rlxfly
 *❉ Aine:*
 https://github.com/Aiinne
 *▸ - - - —「 KANG RECODE 」— - - - ◂
-*❉ Fahri:*
-https://github.com/FahriAdison
+*❉ Zaky:*
+https://github.com/Bangzone
+😈Gc Owner🤖
+https://chat.whatsapp.com/FZEid847RlmJWNBMnSyXPI
 *▸ - - - —「 SPESIAL HELPER 」— - - - ◂
 *❉ Kannachan:*
 *❉ Johannes:*
