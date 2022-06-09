@@ -161,7 +161,15 @@ async function genProfile(conn, m) {
   let font = await jimp.loadFont('./names.fnt'),
     mask = await jimp.read('https://i.imgur.com/552kzaW.png'),
     welcome = await jimp.read(thumbnailUrl.getRandom()),
-    avatar = await jimp.read(await conn.profilePictureUrl(m.sender, 'image').catch(() => 'https://telegra.ph/file/24fa902ead26340f3df2c.png')),
+
+let pp = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+ try {
+ 	pp = await conn.profilePictureUrl(m.sender, 'image')
+} catch (e) {
+
+  } finally {
+}
+
     status = (await conn.fetchStatus(m.sender).catch(console.log) || {}).status?.slice(0, 30) || 'Not Detected'
 
     await avatar.resize(460, 460)
