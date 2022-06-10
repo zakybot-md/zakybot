@@ -1,6 +1,7 @@
 //Make & Help By
 //Johannes & Papah-Chan
 import jimp from 'jimp'
+import fetch from 'node-fetch'
 import fs from 'fs'
 import PhoneNumber from 'awesome-phonenumber'
 import moment from 'moment-timezone'
@@ -8,8 +9,8 @@ import moment from 'moment-timezone'
 let tags = {}
 const defaultMenu = {
   before: `\n> Date: %date\n> Time: %time \n> Runtime: %uptime\n%readmore`,
-  header: '*❏═┅═━–〈 %category*',
-  body: '┊› %cmd %islimit %isPremium',
+  header: '*%category*',
+  body: '• %cmd %islimit %isPremium',
   footer: '',
   after: '',
 }
@@ -24,10 +25,10 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     // Offset    0 is  0.00
     // Offset  420 is  7.00
     let date = d.toLocaleDateString(locale, {
-      ⫹⫺ day: 'numeric',
-      ⫹⫺ month: 'long',
-      ⫹⫺ year: 'numeric',
-      ⫹⫺ timeZone: 'Asia/Jakarta'
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'Asia/Jakarta'
     })
     let time = d.toLocaleTimeString(locale, { timeZone: 'Asia/Jakarta' })
     time = time.replace(/[.]/g, ':')
@@ -68,8 +69,8 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
           ...help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help).map(menu => {
             return menu.help.map(help => {
               return body.replace(/%cmd/g, menu.prefix ? help : '%p' + help)
-                .replace(/%islimit/g, menu.limit ? 'Ⓛ' : '')
-                .replace(/%isPremium/g, menu.premium ? 'Ⓟ' : '')
+                .replace(/%islimit/g, menu.limit ? '(Limit)' : '')
+                .replace(/%isPremium/g, menu.premium ? '(Premium)' : '')
                 .trim()
             }).join('\n')
           }),
@@ -88,29 +89,25 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }
     let fkon = { key: { fromMe: false, participant: `${m.sender.split`@`[0]}@s.whatsapp.net`, ...(m.chat ? { remoteJid: '16504228206@s.whatsapp.net' } : {}) }, message: { contactMessage: { displayName: `${name}`, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`}}}
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
-    // const pp = await conn.profilePictureUrl(conn.user.jid, 'image').catch(_ => './src/avatar_contact.png')
-    // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
-    //conn.sendHydrated(m.chat, text.trim(), conn.getName(conn.user.jid), await genProfile(conn, m), 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ', 'YouTube', null, null, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
-   // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: 'Speedtest', id: `${_p}ping` }}, { quickReplyButton: { displayText: 'Owner', id: `${_p}owner` }} ] })
-   conn.sendButton(m.chat, `*${wish()}, ${name} 👋*`, text.trim(), await genProfile(conn, m), [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], false, { quoted: fkon, contextInfo: { externalAdReply: { showAdAttribution: true,
+    let pp = await conn.profilePictureUrl(m.sender, 'image').catch(_ => 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg')
+    // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['☣️Speedtest💻', _p + 'ping'], ['⚠️BoT ZakY(^_-)', _p + 'owner']], m)
+    //conn.sendHydrated(m.chat, text.trim(), conn.getName(conn.user.jid), await genProfile(conn, m), 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ', 'YouTube', null, null, [['☣️Speedtest💻', _p + 'ping'], ['⚠️BoT ZakY(^_-)', _p + 'owner']], m)
+   // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: '☣️Speedtest💻', id: `${_p}ping` }}, { quickReplyButton: { displayText: '⚠️BoT ZakY(^_-)', id: `${_p}owner` }} ] })
+   conn.sendButton(m.chat, `*${wish()}, ${name} 👋(^_-)*`, text.trim(), await genProfile(conn, m), [['☣️Speedtest💻', _p + 'ping'], ['⚠️BoT ZakY(^_-)', _p + 'owner']], false, { quoted: fkon, contextInfo: { externalAdReply: { showAdAttribution: true,
 mediaType: 'VIDEO',
 mediaUrl: 'https://youtu.be/rHd8y83kakI',
 title: 'Zakybot-MD',
 body: 'Made By ZakY',
 thumbnail: await(await fetch(pp)).buffer(),
 sourceUrl: 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ'
-}
   }
-})
-conn.sendFile(m.chat, vn, 'dj1.mp3', null, m, true, {
-type: 'audioMessage', 
-ptt: true 
+ } 
 })
     // conn.sendButton(m.chat, 
     //`*Hi, ${name} 👋*\n\n`, 
   //  text.trim(), './media/marin.jpg', [
-// [`Speedtest`, `${_p}ping`],
-// [`Owner`, `${_p}owner`]
+// [`☣️Speedtest💻`, `${_p}ping`],
+// [`⚠️BoT ZakY(^_-)`, `${_p}owner`]
 //], m, {asLocation: true})
   } catch (e) {
     m.reply('An error occurred')
@@ -140,19 +137,19 @@ function wish() {
   const time = moment.tz('Asia/Kolkata').format('HH')
   wishloc = ('Hi')
   if (time >= 0) {
-    wishloc = ('selamat malam, jangan lupa bobo yah')
+    wishloc = ('Night Rider')
   }
   if (time >= 4) {
-    wishloc = ('selamat pagi kak')
+    wishloc = ('Good Morning')
   }
   if (time >= 12) {
-    wishloc = ('selamat siang tod wkwkwk')
+    wishloc = ('Good Afternoon')
   }
   if (time >= 16) {
-    wishloc = ('️selamat sore')
+    wishloc = ('️Good Evening')
   }
   if (time >= 23) {
-    wishloc = ('selamat malam, jangan lupa bobo yah')
+    wishloc = ('Night Rider')
   }
   return wishloc
 }
