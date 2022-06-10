@@ -4,6 +4,15 @@ import jimp from 'jimp'
 import fs from 'fs'
 import PhoneNumber from 'awesome-phonenumber'
 import moment from 'moment-timezone'
+let handler = async (m, { conn, usedPrefix: _p, args, command }) => {
+//*****************FOTO USER*********************
+let pp = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+ try {
+ 	pp = await conn.profilePictureUrl(m.sender, 'image')
+} catch (e) {
+
+  } finally {
+}
 
 let tags = {}
 const defaultMenu = {
@@ -14,8 +23,7 @@ const defaultMenu = {
   after: '',
 }
 
-let handler = async (m, { conn, usedPrefix: _p }) => {
-  try {
+try {
     let name = m.pushName || conn.getName(m.sender)
     let d = new Date(new Date + 3600000)
     let locale = 'en'
@@ -60,11 +68,11 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     let header = conn.menu.header || defaultMenu.header
     let body = conn.menu.body || defaultMenu.body
     let footer = conn.menu.footer || defaultMenu.footer
-    let after = conn.menu.after || defaultMenu.after
+    let after = conn.menu.after || (conn.user.jid == global.conn.user.jid ? '' : `Powered by https://wa.me/${global.conn.user.jid.split`@`[0]}`) + defaultMenu.after
     let _text = [
       before,
       ...Object.keys(tags).map(tag => {
-        return header.replace(/%category/g, tags[tag].toUpperCase()) + '\n' + [
+        return header.replace(/%category/g, tags[tag]) + '\n' + [
           ...help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help).map(menu => {
             return menu.help.map(help => {
               return body.replace(/%cmd/g, menu.prefix ? help : '%p' + help)
@@ -78,15 +86,22 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
       }),
       after
     ].join('\n')
-    let text = typeof conn.menu == 'string' ? conn.menu : typeof conn.menu == 'object' ? _text : ''
+    text = typeof conn.menu == 'string' ? conn.menu : typeof conn.menu == 'object' ? _text : ''
     let replace = {
       '%': '%',
-      p: _p, uptime,
-      me: conn.getName(conn.user.jid),
-      name, date, time,
+      p: _p, uptime, muptime,
+      me: conn.user.name,
+      npmname: package.name,
+      npmdesc: package.description,
+      version: package.version,
+      exp: exp - min,
+      maxexp: xp,
+      totalexp: exp,
+      xp4levelup: max - exp,
+      github: package.homepage ? package.homepage.url || package.homepage : '[unknown github url]',
+      level, limit, money, name, weton, week, date, dateIslamic, time, totalreg, rtotalreg, role,
       readmore: readMore
     }
-    let fkon = { key: { fromMe: false, participant: `${m.sender.split`@`[0]}@s.whatsapp.net`, ...(m.chat ? { remoteJid: '16504228206@s.whatsapp.net' } : {}) }, message: { contactMessage: { displayName: `${name}`, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`}}}
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
     await conn.sendFile(m.chat, bzz, 'bzz.opus', null, m, true)
     let template = generateWAMessageFromContent(m.chat, proto.Message.fromObject({
@@ -107,28 +122,62 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
             "fileEncSha256": "NI9ykWUcXKquea4BmH7GgzhMb3pAeqqwE+MTFbH/Wk8=",
             "directPath": "/v/t62.7118-24/35150115_287008086621545_8250021012380583765_n.enc?ccb=11-4&oh=6f0f730e5224c054969c276a6276a920&oe=61A21F46",
             "mediaKeyTimestamp": "1634472176",
-            "jpegThumbnail": await (await require('node-fetch')(pp)).buffer(),}
-  }
-})
-conn.sendFile(m.chat, vn, 'dj1.mp3', null, m, true, {
-type: 'audioMessage', 
-ptt: true 
-})
-    // conn.sendButton(m.chat, 
-    //`*Hi, ${name} 👋*\n\n`, 
-  //  text.trim(), './media/marin.jpg', [
-// [`Speedtest`, `${_p}ping`],
-// [`Owner`, `${_p}owner`]
-//], m, {asLocation: true})
+            "jpegThumbnail": await (await require('node-fetch')(pp)).buffer(),},
+                 hydratedButtons: [{
+                     urlButton: {
+                         displayText: 'MY WEB',
+               url: 'https://youtube.com/channel/UC3zScvuQfMxqiTC5x_JUEng'
+             }
+
+           },
+             {
+             urlButton: {
+               displayText: 'MY GROUP',
+               url: 'https://chat.whatsapp.com/GngfXIF8XmgHf9Gm7MQFps'
+             }
+
+           },
+           {
+            quickReplyButton: {
+              displayText: 'Owner',
+              id: '.owner',
+            }
+
+          },
+              {
+            quickReplyButton: {
+              displayText: 'SC',
+              id: '.sc',
+                     }
+                 }
+                 ]
+             }
+         }
+     }), { userJid: m.sender, quoted: m});
+     //conn.reply(m.chat, text.trim(), m)
+     return await conn.relayMessage(
+         m.chat,
+         template.message,
+         { messageId: template.key.id }
+     )
   } catch (e) {
-    m.reply('An error occurred')
+    conn.reply(m.chat, 'Maaf, menu sedang error', m)
     throw e
   }
 }
 handler.help = ['m']
 handler.tags = ['general']
-handler.alias = ['m']
 handler.command = /^(m)$/i
+handler.owner = false
+handler.mods = false
+handler.premium = false
+handler.group = false
+handler.private = false
+
+handler.admin = false
+handler.botAdmin = false
+
+handler.fail = null
 handler.exp = 3
 
 export default handler
@@ -141,50 +190,4 @@ function clockString(ms) {
   let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
   let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-}
-
-function wish() {
-    let wishloc = ''
-  const time = moment.tz('Asia/Kolkata').format('HH')
-  wishloc = ('Hi')
-  if (time >= 0) {
-    wishloc = ('Night Rider')
-  }
-  if (time >= 4) {
-    wishloc = ('Good Morning')
-  }
-  if (time >= 12) {
-    wishloc = ('Good Afternoon')
-  }
-  if (time >= 16) {
-    wishloc = ('️Good Evening')
-  }
-  if (time >= 23) {
-    wishloc = ('Night Rider')
-  }
-  return wishloc
-}
-
-async function genProfile(conn, m) {
-  let font = await jimp.loadFont('./names.fnt'),
-    mask = await jimp.read('https://i.imgur.com/552kzaW.png'),
-    welcome = await jimp.read(thumbnailUrl.getRandom()),
-    let pp = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
- try {
-     	pp = await conn.profilePictureUrl(m.sender, 'image')
-} catch(() => 'https://telegra.ph/file/24fa902ead26340f3df2c.png')),
-    status = (await conn.fetchStatus(m.sender).catch(console.log) || {}).status?.slice(0, 30) || 'Not Detected'
-
-    await avatar.resize(460, 460)
-    await mask.resize(460, 460)
-    await avatar.mask(mask)
-    await welcome.resize(welcome.getWidth(), welcome.getHeight())
-
-    await welcome.print(font, 550, 180, 'Name:')
-    await welcome.print(font, 650, 255, m.pushName.slice(0, 25))
-    await welcome.print(font, 550, 340, 'About:')
-    await welcome.print(font, 650, 415, status)
-    await welcome.print(font, 550, 500, 'Number:')
-    await welcome.print(font, 650, 575, PhoneNumber('+' + m.sender.split('@')[0]).getNumber('international'))
-    return await welcome.composite(avatar, 50, 170).getBufferAsync('image/png')
 }
