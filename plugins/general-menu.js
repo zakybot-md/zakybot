@@ -1,7 +1,6 @@
 //Make & Help By
 //Johannes & Papah-Chan
 import jimp from 'jimp'
-import fetch from 'node-fetch'
 import fs from 'fs'
 import PhoneNumber from 'awesome-phonenumber'
 import moment from 'moment-timezone'
@@ -9,8 +8,8 @@ import moment from 'moment-timezone'
 let tags = {}
 const defaultMenu = {
   before: `\n> Date: %date\n> Time: %time \n> Runtime: %uptime\n%readmore`,
-  header: '*%category*',
-  body: '• %cmd %islimit %isPremium',
+  header: '*❏═┅═━–〈 %category*',
+  body: '┊› %cmd %islimit %isPremium',
   footer: '',
   after: '',
 }
@@ -25,10 +24,10 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     // Offset    0 is  0.00
     // Offset  420 is  7.00
     let date = d.toLocaleDateString(locale, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'Asia/Jakarta'
+      ⫹⫺ day: 'numeric',
+      ⫹⫺ month: 'long',
+      ⫹⫺ year: 'numeric',
+      ⫹⫺ timeZone: 'Asia/Jakarta'
     })
     let time = d.toLocaleTimeString(locale, { timeZone: 'Asia/Jakarta' })
     time = time.replace(/[.]/g, ':')
@@ -40,7 +39,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
         setTimeout(resolve, 1000)
       }) * 1000
     }
-      let vn = './media/tante-tante.mp3'
+      let vn = './media/zaky.mp3'
     let uptime = clockString(_uptime)
     let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
       return {
@@ -69,8 +68,8 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
           ...help.filter(menu => menu.tags && menu.tags.includes(tag) && menu.help).map(menu => {
             return menu.help.map(help => {
               return body.replace(/%cmd/g, menu.prefix ? help : '%p' + help)
-                .replace(/%islimit/g, menu.limit ? '(Limit)' : '')
-                .replace(/%isPremium/g, menu.premium ? '(Premium)' : '')
+                .replace(/%islimit/g, menu.limit ? 'Ⓛ' : '')
+                .replace(/%isPremium/g, menu.premium ? 'Ⓟ' : '')
                 .trim()
             }).join('\n')
           }),
@@ -89,7 +88,7 @@ let handler = async (m, { conn, usedPrefix: _p }) => {
     }
     let fkon = { key: { fromMe: false, participant: `${m.sender.split`@`[0]}@s.whatsapp.net`, ...(m.chat ? { remoteJid: '16504228206@s.whatsapp.net' } : {}) }, message: { contactMessage: { displayName: `${name}`, vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:${name}\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`}}}
     text = text.replace(new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, 'g'), (_, name) => '' + replace[name])
-    let pp = await conn.profilePictureUrl(m.sender, 'image').catch(_ => 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg')
+    // const pp = await conn.profilePictureUrl(conn.user.jid, 'image').catch(_ => './src/avatar_contact.png')
     // if (m.isGroup) return conn.sendButton(m.chat, text.trim(), conn.getName(conn.user.jid), pp, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
     //conn.sendHydrated(m.chat, text.trim(), conn.getName(conn.user.jid), await genProfile(conn, m), 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ', 'YouTube', null, null, [['Speedtest', _p + 'ping'], ['Owner', _p + 'owner']], m)
    // conn.sendMessage(m.chat, { video: { url: 'https://telegra.ph/file/c82d5c358495e8ef15916.mp4' }, gifPlayback: true, gifAttribution: ~~(Math.random() * 2), caption: text.trim(), footer: await conn.getName(conn.user.jid) , templateButtons: [{ quickReplyButton: { displayText: 'Speedtest', id: `${_p}ping` }}, { quickReplyButton: { displayText: 'Owner', id: `${_p}owner` }} ] })
@@ -100,8 +99,12 @@ title: 'Zakybot-MD',
 body: 'Made By ZakY',
 thumbnail: await(await fetch(pp)).buffer(),
 sourceUrl: 'https://youtube.com/channel/UC0hs_I8N3JntK5vO6KogavQ'
+}
   }
- } 
+})
+conn.sendFile(m.chat, vn, 'dj1.mp3', null, m, true, {
+type: 'audioMessage', 
+ptt: true 
 })
     // conn.sendButton(m.chat, 
     //`*Hi, ${name} 👋*\n\n`, 
@@ -137,19 +140,19 @@ function wish() {
   const time = moment.tz('Asia/Kolkata').format('HH')
   wishloc = ('Hi')
   if (time >= 0) {
-    wishloc = ('Night Rider')
+    wishloc = ('selamat malam, jangan lupa bobo yah')
   }
   if (time >= 4) {
-    wishloc = ('Good Morning')
+    wishloc = ('selamat pagi kak')
   }
   if (time >= 12) {
-    wishloc = ('Good Afternoon')
+    wishloc = ('selamat siang tod wkwkwk')
   }
   if (time >= 16) {
-    wishloc = ('️Good Evening')
+    wishloc = ('️selamat sore')
   }
   if (time >= 23) {
-    wishloc = ('Night Rider')
+    wishloc = ('selamat malam, jangan lupa bobo yah')
   }
   return wishloc
 }
